@@ -1,7 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import db, {auth, storage} from '../../firebase';
-import firebase from "firebase";
-import { collection, doc, setDoc } from "firebase/firestore"; 
 import { Button, Input, Checkbox, FormControl, FormGroup, FormControlLabel, FormLabel } from '@material-ui/core';
 
 export default function Category() {
@@ -9,6 +7,7 @@ export default function Category() {
     const [photos, setPhotos] = useState([])
     const [data, setData] = useState([])
     const [file, setFile] = useState([]);
+    const [profile, setProfile] = useState([]);
     const [categories, setCategories] = useState({
       Wedding: false,
       Birthday: false, Anniversary: false, Bachelorette: false, Conference: false, Couples: false, 
@@ -62,9 +61,28 @@ export default function Category() {
         console.log('files');
       }
 
+      function handleProfileChange(e){
+        setProfile(e.target.files[0]);
+      }
+
       const cloudStorage = () => {
         var arr = [];
         const promises = [];
+        var profile_url = '';
+        let img = profile;
+        let uploadTask = storage.ref(`/${user}/${img.name}`).put(img);
+          promises.push(uploadTask);
+          uploadTask.on("state_changed", console.log, console.error, () => {
+          storage
+            .ref(user)
+            .child(img.name)
+            .getDownloadURL()
+            .then((url) => {
+              console.log(url);
+              profile_url = url;
+              console.log(arr, "after");
+            });
+        });
         for (var i = 0; i < file.length; i++){
           console.log(photos, "first");
           let img = file[i];
@@ -87,9 +105,10 @@ export default function Category() {
           setTimeout(() => {
           console.log('all uploads complete');
           db.collection("photographers").doc(user).update({
-            photos: arr
+            photos: arr,
+            profile: profile_url
           }).then(
-            () => window.location.href = "/more",
+            () => window.location.href = "/dashboard",
             (error) => console.log("Code phat gya: ", error)
           )
         }, 3000)
@@ -100,6 +119,7 @@ export default function Category() {
 
     return (
         <div>
+          <br/><br/>
           {console.log(photos, 'lol')}
             <FormControl component="fieldset">
               <FormLabel component="legend">Assign categories in which you are suitable: </FormLabel>
@@ -195,8 +215,17 @@ export default function Category() {
             <br/>
             {/* <p>{data[data.length-1].Name} {data[data.length-1].Email}</p> */}
             {/* {console.log(data)} */}
-            <br/><br/>
+            <br/>
             {/* <input type="file" id="uploadZip" name="icon" multiple/> */}
+            <FormLabel component="legend" style={{textAlign:'left', marginLeft: '24vw'}}>Upload Your Profile Picture: </FormLabel>
+            <br/>
+            <FormControlLabel
+            control={<Input type="file" id="uploadImage" onChange={handleProfileChange} accept="image/png, image/jpeg" name="image"/>}
+            label="Upload Picture"
+            />
+            <br/><br/>
+            <FormLabel component="legend" style={{textAlign:'left', marginLeft: '24vw'}}>Upload Your Sample Photographs: </FormLabel>
+            <br/>
             <FormControlLabel
             control={<Input type="file" id="uploadImage" onChange={handleFileChange} accept="image/png, image/jpeg" name="image" inputProps={{ multiple: true }} />}
             label="Upload Image"
