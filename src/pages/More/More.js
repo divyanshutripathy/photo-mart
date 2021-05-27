@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { Button, FormControl, Input, InputLabel } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import {withRouter} from 'react-router-dom';
 import {auth} from '../../firebase';
 

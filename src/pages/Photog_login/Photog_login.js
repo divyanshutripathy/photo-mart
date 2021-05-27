@@ -44,15 +44,25 @@ export default function Photog_login() {
             emailRef.current.value,
             passRef.current.value
         ).then(user => {
-            // window.location.href = "/more";
-            setLogin(2);
+            var uid = user.user.X.X;
+            db.collection('photographers').doc(uid).get().then(doc => {
+                if (doc.exists){
+                    if ("categories" in doc.data()){
+                        window.location.href = "/dashboard";
+                    }else{
+                        setLogin(2);
+                    }
+                }else{
+                    console.log("Nhi mila");
+                }
+            });
         }).catch(error => {
             setError1("Invalid credentials");
         })
     }
 
     function cityForState(event){
-        setSelectedState(event.value);
+        setSelectedState(event.label);
         const cities = csc.getCitiesOfState("IN", event.value);
         console.log(cities);
         const options = cities.map((cit) =>({
@@ -97,7 +107,6 @@ export default function Photog_login() {
         }
 
         if (pass === conf){
-            console.log(selectedCity);
             auth.createUserWithEmailAndPassword(
                 emailRef.current.value,
                 passRef.current.value
@@ -121,13 +130,14 @@ export default function Photog_login() {
             })
 
         }else{
-            alert("Password doesn't match!");
+            setError2("Password doesn't match!");
         }
     }
     
     if (login === 1){ // Signup form
         return (
             <div className='login__form'>
+                <br/><br/>
                 <Button color='primary' variant='contained' onClick={event => setLogin(0)}> Login </Button>
                 <Button color='primary' id='signup' variant='contained' onClick={event => setLogin(1)}> Signup </Button>
                 <br/><br/>
@@ -152,9 +162,11 @@ export default function Photog_login() {
                 </FormControl>
                 <br/><br/>
 
+                {/* State Selector  */}
                 <Select options={states} placeholder='Select State' onChange={event => cityForState(event)} />
                 <br/>
 
+                {/* City Selector  */}
                 <Select options={city} placeholder='Select City' onChange={event => setSelectedCity(event.label)} />
                 <br/>
 
@@ -179,6 +191,7 @@ export default function Photog_login() {
     }else{
         return (
             <div className='login__form'>
+                <br/><br/>
                 <Button color='primary' variant='contained' onClick={event => setLogin(0)}> Login </Button>
                 <Button color='primary' id='signup' variant='contained' onClick={event => setLogin(1)}> Signup </Button>
                 <br/><br/>
