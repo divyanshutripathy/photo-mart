@@ -111,6 +111,7 @@ export default function Photog_login() {
                 emailRef.current.value,
                 passRef.current.value
             ).then(_user => {
+                console.log("chomu");
                 console.log(_user);
                 uid = _user.user.X.X;
                 db.collection('photographers').doc(uid).set({
@@ -126,7 +127,7 @@ export default function Photog_login() {
                 );
                 setLogin(2);
             }).catch(error => {
-                console.log(error)
+                setError2(error.message);
             })
 
         }else{
