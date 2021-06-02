@@ -67,9 +67,11 @@ export default function Category() {
 
       const cloudStorage = () => {
         var arr = [];
+        var imgNames = [];
         const promises = [];
         var profile_url = '';
         let img = profile;
+        var profile_name = img.name;
         let uploadTask = storage.ref(`/${user}/${img.name}`).put(img);
           promises.push(uploadTask);
           uploadTask.on("state_changed", console.log, console.error, () => {
@@ -86,6 +88,8 @@ export default function Category() {
         for (var i = 0; i < file.length; i++){
           console.log(photos, "first");
           let img = file[i];
+          console.log(img.name, "Name hai ye");
+          imgNames.push(img.name);
           let uploadTask = storage.ref(`/${user}/${img.name}`).put(img);
           promises.push(uploadTask);
           uploadTask.on("state_changed", console.log, console.error, () => {
@@ -104,9 +108,14 @@ export default function Category() {
         Promise.allSettled(promises).then(tasks => {
           setTimeout(() => {
           console.log('all uploads complete');
+          var name_urls = [];
+          for (var u = 0; u < file.length; u++){
+            name_urls.push({name: imgNames[u], url: arr[u]})
+          }
+          console.log(name_urls);
           db.collection("photographers").doc(user).update({
-            photos: arr,
-            profile: profile_url
+            photos: name_urls,
+            profile: {url: profile_url, name: profile_name}
           }).then(
             () => window.location.href = "/dashboard",
             (error) => console.log("Code phat gya: ", error)

@@ -25,6 +25,26 @@ export default function Photog_login() {
     const [error2, setError2] = useState("");
 
     useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((_user) => {
+            if (_user){
+                let uid = _user.uid;
+                db.collection('photographers').doc(uid).get().then(doc => {
+                    if (doc.exists){
+                        if ("categories" in doc.data()){
+                            window.location.href = "/dashboard";
+                        }else{
+                            setLogin(2);
+                        }
+                    }else{
+                        console.log("Nhi mila");
+                    }
+                })
+            }
+        })
+        return unsubscribe;
+    }, [])
+
+    useEffect(() => {
         const nstates = csc.getStatesOfCountry("IN");
         const options = nstates.map((state) =>({
             'value': state.isoCode,
