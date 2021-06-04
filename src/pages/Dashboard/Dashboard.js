@@ -187,6 +187,8 @@ export default function Dashboard() {
                         deleteProfile();
                     }else if (dp === 2){
                         uploadDP();
+                    }else{
+                        window.location.reload();
                     }
                 })
             }, 3000)
@@ -214,10 +216,13 @@ export default function Dashboard() {
             if (daaloPhoto.length){
                 newPhotos();
             }else{
+                console.log(dp, "ahjfhsdjhfoahuerhewbfiuhsuihv");
                 if (dp === 1){
                     deleteProfile();
                 }else if (dp === 2){
                     uploadDP();
+                }else{
+                    window.location.reload();
                 }
             }
         })
@@ -241,7 +246,28 @@ export default function Dashboard() {
 
     // Function to upload the new profile photo
     function uploadDP(){
-        storage.ref(`/${user}/${profilePhoto.name}`).delete().then(() => {
+        if (profilePhoto.url !== ""){
+            storage.ref(`/${user}/${profilePhoto.name}`).delete().then(() => {
+                let img = newProfile;
+                var profile_name = img.name;
+                let uploadTask = storage.ref(`/${user}/${img.name}`).put(img);
+                uploadTask.on("state_changed", console.log, console.error, () => {
+                storage
+                    .ref(user)
+                    .child(img.name)
+                    .getDownloadURL()
+                    .then((url) => {
+                    var profile_url = url;
+                    db.collection("photographers").doc(user).update({
+                        profile: {url: profile_url, name: profile_name}
+                    }).then(
+                        () => window.location.reload(),
+                        (error) => console.log("Code phat gya: ", error)
+                    )
+                    });
+                });
+            })
+        }else{
             let img = newProfile;
             var profile_name = img.name;
             let uploadTask = storage.ref(`/${user}/${img.name}`).put(img);
@@ -260,7 +286,7 @@ export default function Dashboard() {
                 )
                 });
             });
-        })
+        }
     }
 
     function hello123(){
@@ -495,7 +521,6 @@ export default function Dashboard() {
                         />
                     </RadioGroup>
                     <br/>
-                    <Button onClick={hello123}>Check</Button>
                 </div>
 
                 {
