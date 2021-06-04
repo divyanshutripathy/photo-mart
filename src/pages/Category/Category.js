@@ -65,27 +65,45 @@ export default function Category() {
         setProfile(e.target.files[0]);
       }
 
+      const profileStorage = () => {
+
+      }
+
       const cloudStorage = () => {
         var arr = [];
+        var imgNames = [];
         const promises = [];
+
+        var profile_name = '';
         var profile_url = '';
-        let img = profile;
-        let uploadTask = storage.ref(`/${user}/${img.name}`).put(img);
-          promises.push(uploadTask);
-          uploadTask.on("state_changed", console.log, console.error, () => {
-          storage
-            .ref(user)
-            .child(img.name)
-            .getDownloadURL()
-            .then((url) => {
-              console.log(url);
-              profile_url = url;
-              console.log(arr, "after");
-            });
-        });
+        console.log("1", profile);
+        if (profile.length !== 0){
+          console.log("Yeha aya!2");
+          let img = profile;
+          profile_name = img.name;
+          let uploadTask = storage.ref(`/${user}/${img.name}`).put(img);
+            promises.push(uploadTask);
+            uploadTask.on("state_changed", console.log, console.error, () => {
+            storage
+              .ref(user)
+              .child(img.name)
+              .getDownloadURL()
+              .then((url) => {
+                console.log(url);
+                profile_url = url;
+                console.log(arr, "after");
+              });
+          });
+        }
+
+        console.log("3");
+
         for (var i = 0; i < file.length; i++){
+          console.log("4");
           console.log(photos, "first");
           let img = file[i];
+          console.log(img.name, "Name hai ye");
+          imgNames.push(img.name);
           let uploadTask = storage.ref(`/${user}/${img.name}`).put(img);
           promises.push(uploadTask);
           uploadTask.on("state_changed", console.log, console.error, () => {
@@ -94,6 +112,7 @@ export default function Category() {
             .child(img.name)
             .getDownloadURL()
             .then((url) => {
+              console.log("5");
               console.log(url);
               arr.push(url);
               setPhotos(arr);
@@ -103,10 +122,17 @@ export default function Category() {
         }
         Promise.allSettled(promises).then(tasks => {
           setTimeout(() => {
+            console.log("6");
           console.log('all uploads complete');
+          var name_urls = [];
+          for (var u = 0; u < file.length; u++){
+            name_urls.push({name: imgNames[u], url: arr[u]})
+          }
+          console.log(name_urls, "adhhfghsgdhbh-----------------------------------")
+          console.log(profile_url, "wqiei vjkdjkj9239920", profile_name);
           db.collection("photographers").doc(user).update({
-            photos: arr,
-            profile: profile_url
+            photos: name_urls,
+            profile: {url: profile_url, name: profile_name}
           }).then(
             () => window.location.href = "/dashboard",
             (error) => console.log("Code phat gya: ", error)

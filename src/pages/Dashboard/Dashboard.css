@@ -50,3 +50,8 @@ margin-left: .25em;
     margin-left: 2vw;
     margin-bottom: 2vw;
 }
+
+.edit__form{
+    width: 50vw;
+    margin-left: 25vw;
+}
