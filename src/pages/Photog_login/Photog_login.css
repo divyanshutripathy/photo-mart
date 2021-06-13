@@ -1,6 +1,10 @@
 .login__form{
     width: 30vw;
-    margin-left: 35vw;
+    text-align: center;
+    padding-bottom: 1vh;
+    margin-top: 3vh;
+    padding-left: 1vw;
+
 }
 
 #signup{

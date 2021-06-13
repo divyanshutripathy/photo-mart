@@ -5,6 +5,13 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* background-color: rgb(25, 118, 210); */
+  /* 
+  background-image: url('https://wallpaperaccess.com/full/2831783.jpg');
+  background-repeat: no-repeat; */
+  background-image: url('https://firebasestorage.googleapis.com/v0/b/photo-mart.appspot.com/o/pixels.jpg?alt=media&token=eedf2914-be28-407c-80a7-42e0bccc887a');
+  background-size:cover;
+  background-attachment: fixed;
 }
 
 code {
