@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import { Button, FormControl, Input, InputLabel } from '@material-ui/core';
+import { Button, FormControl, Input, InputLabel, AppBar, Toolbar, Typography, makeStyles, fade, Grid, Paper, Link } from '@material-ui/core';
 import './Photog_login.css';
 import db, {auth} from '../../firebase';
 import firebase from "firebase";
@@ -8,6 +8,64 @@ import Category from '../Category/Category';
 import csc from 'country-state-city';
 import Select from 'react-select';
 
+export const useStyles = makeStyles((theme) => ({
+    root: {
+      flexGrow: 1,
+    },
+    paper: {
+      padding: theme.spacing(2),
+      textAlign: 'center',
+      color: 'inherited',//theme.palette.text.secondary,
+    },
+  }));
+
+export const useStyles0 = makeStyles((theme) => ({ 
+grow: {
+    flexGrow: 1,
+},
+//   title: {
+//     display: 'none',
+//     [theme.breakpoints.up('sm')]: {
+//       display: 'block',
+//     },
+//   },
+search: {
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.common.white, 0.15),
+    '&:hover': {
+    backgroundColor: fade(theme.palette.common.white, 0.25),
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+    },
+},
+searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+},
+inputRoot: {
+    color: 'inherit',
+},
+inputInput: {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+    width: '20ch',
+    },
+},
+}));
 
 export default function Photog_login() {
 
@@ -154,11 +212,31 @@ export default function Photog_login() {
             setError2("Password doesn't match!");
         }
     }
+
+    const classes = useStyles();
+    const c = useStyles0();
     
     if (login === 1){ // Signup form
         return (
-            <div className='login__form'>
+            <div>
+                <div className={c.grow}>
+                    <AppBar position="static">
+                        <Toolbar>
+                        <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
+                        <Typography className={c.title} variant="h6" noWrap>
+                            Grapher-Mart
+                        </Typography>
+                        </Link>
+                        <div className={c.grow} />
+                        </Toolbar>
+                    </AppBar>
+                </div>
+
                 <br/><br/>
+        <Grid container spacing={0.5} >
+        <Grid item xs={4} style={{marginLeft: "36vw"}}>
+            <Paper className={classes.paper} style={{marginRight: '-1vw'}}>  
+            <div className='login__form'>
                 <Button color='primary' variant='contained' onClick={event => setLogin(0)}> Login </Button>
                 <Button color='primary' id='signup' variant='contained' onClick={event => setLogin(1)}> Signup </Button>
                 <br/><br/>
@@ -206,13 +284,33 @@ export default function Photog_login() {
                 <Button type="Submit" onClick={handleSignup} variant='outlinedPrimary'>Submit</Button>
                 <p></p>
             </div>
+            </Paper>
+            </Grid>
+        </Grid>
+            </div>
         )
     } else if (login === 2){
         return <Category/>
     }else{
         return (
+            <div>
+                <div className={c.grow}>
+                    <AppBar position="static">
+                        <Toolbar>
+                        <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
+                        <Typography className={c.title} variant="h6" noWrap>
+                            Grapher-Mart
+                        </Typography>
+                        </Link>
+                        <div className={c.grow} />
+                        </Toolbar>
+                    </AppBar>
+                </div>
+        <br/><br/>
+        <Grid container spacing={0.5} >
+        <Grid item xs={4} style={{marginLeft: "36vw"}}>
+            <Paper className={classes.paper} style={{marginRight: '-1vw'}}>           
             <div className='login__form'>
-                <br/><br/>
                 <Button color='primary' variant='contained' onClick={event => setLogin(0)}> Login </Button>
                 <Button color='primary' id='signup' variant='contained' onClick={event => setLogin(1)}> Signup </Button>
                 <br/><br/>
@@ -231,6 +329,10 @@ export default function Photog_login() {
                 <Button type='submit' onClick={handleLogin} variant='outlinedPrimary'> Submit </Button>
                 <br/><br/>
                 <Button color='primary' variant='contained' href='/'> Back </Button>
+            </div>
+            </Paper>
+            </Grid>
+        </Grid>
             </div>
         )
     }

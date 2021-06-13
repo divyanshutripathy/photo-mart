@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import db, {auth, storage} from '../../firebase';
 import { Button, Input, Checkbox, FormControl, FormGroup, FormControlLabel, FormLabel } from '@material-ui/core';
+import Loader from "react-loader-spinner";
 
 export default function Category() {
     const [user, setUser] = useState("");
@@ -16,6 +17,7 @@ export default function Category() {
       Maternity: false, Newborn: false, Product: false, Property: false, Solo_Traveler: false, 
       Hair_Stylist: false, Folk: false, Drone: false
     })
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
       let photog = "";
@@ -48,6 +50,7 @@ export default function Category() {
       };
 
       const logData = (event) => {
+        setIsLoading(true);
         db.collection("photographers").doc(user).update({
           categories: categories
         }).then(
@@ -142,6 +145,19 @@ export default function Category() {
       }
 
       const {Wedding, Birthday, Anniversary, Bachelorette, Conference, Couples, Family, Fashion, Graduation, Honeymoon, Instagram, Kids, Maternity, Newborn, Product, Property, Solo_Traveler, Hair_Stylist, Folk, Drone} = categories;
+
+      if (isLoading){
+        return(
+        <Loader
+            type="Grid"
+            color="#00BFFF"
+            height={100}
+            width={100}
+            visible={isLoading}
+            style = {{marginTop: '20vh'}}
+        />
+        );
+    }
 
     return (
         <div>

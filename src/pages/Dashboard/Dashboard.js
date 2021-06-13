@@ -1,16 +1,36 @@
 import React, {useState, useEffect} from 'react';
 import db, {auth, storage} from '../../firebase';
 import './Dashboard.css';
-import { Button, FormControl, Input, InputLabel, Checkbox, FormGroup, FormControlLabel, FormLabel, RadioGroup, Radio } from '@material-ui/core';
+import { Button, FormControl, Input, InputLabel, Checkbox, FormGroup, FormControlLabel, FormLabel, RadioGroup, Radio, Typography, AppBar, Toolbar, Fade, Link, Grid, Paper, Modal, Backdrop } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import dpp from '../../dpp.png';
 import csc from 'country-state-city';
 import Select from 'react-select';
 import { Save } from '@material-ui/icons';
 import firebase from "firebase";
+import Loader from "react-loader-spinner";
+import {useStyles, useStyles0} from '../Photog_login/Photog_login';
+import Messages from '../Messages/Messages';
+
+const useStylesM = makeStyles((theme) => ({
+    modal: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    paper: {
+      backgroundColor: theme.palette.background.paper,
+      border: '2px solid #000',
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
+    },
+  }));
 
 export default function Dashboard() {
 
+    const clm = useStylesM();
+    const c = useStyles0();
+    const classes = useStyles();
     const [user, setUser] = useState({});
     const [data, setData] = useState({});
     const [photos, setPhotos] = useState([]);
@@ -37,6 +57,8 @@ export default function Dashboard() {
     const [dp, setdp] = useState(0);
     const [profilePhoto, setProfilePhoto] = useState({});
     const [newProfile, setNewProfile] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [openMessage, setOpenMessage] = useState(false);
 
 
     useEffect(() => {
@@ -47,13 +69,14 @@ export default function Dashboard() {
                 db.collection('photographers').doc(uid).get().then(doc => {
                     if (doc.exists){
                         var data = doc.data();
-                        console.log(data);
+                        console.log(data, user, "|| sjahfuhdsuhfusnhjohsjdhnjshnj----------------------");
                         setPhotos(data.photos);
                         logPhotos(data.photos);
                         setData(data);
                         setProfilePhoto(data.profile)
                         setCategories(data.categories);
                         getStates(data);
+                        setIsLoading(false);
                     }else{
                         console.log("Nhi mila");
                     }
@@ -70,7 +93,7 @@ export default function Dashboard() {
         for (let i = 0; i < pics.length; i++){
             pobj[pics[i].name] = false;
         }
-        console.log(pobj);
+        // console.log(pobj);
         setToDelete(pobj);
     }
 
@@ -82,7 +105,7 @@ export default function Dashboard() {
         }
         ))
         setStates(options);
-        console.log(datas);
+        // console.log(datas);
         for (var i = 0; i < 37; i++){
             if (datas.State === nstates[i].name){
                 setDefaultState(i);
@@ -111,7 +134,7 @@ export default function Dashboard() {
         setSelectedCity(data.City);
         setSelectedState(data.State);
         // setCategories(data.categories);
-        console.log(categories, "maha chomu react");
+        // console.log(categories, "maha chomu react");
     }, [edit])
 
     function editCat(event){
@@ -129,7 +152,7 @@ export default function Dashboard() {
     function cityForState(event){
         setSelectedState(event.label);
         const cities = csc.getCitiesOfState("IN", event.value);
-        console.log(cities);
+        // console.log(cities);
         const options = cities.map((cit) =>({
             'value': cit.stateCode,
             'label': cit.name
@@ -141,7 +164,8 @@ export default function Dashboard() {
     // Ultimate Function To save Changes in the edit form
     function Save(event){
         event.preventDefault();
-        console.log(name, no, selectedState, selectedCity);
+        setIsLoading(true);
+        // console.log(name, no, selectedState, selectedCity);
         db.collection("photographers").doc(user).update({
             Name: name,
             No: no,
@@ -196,8 +220,8 @@ export default function Dashboard() {
     }
 
     function deletePhotos(){
-        console.log(toDelete);
-        console.log(photos);
+        // console.log(toDelete);
+        // console.log(photos);
         var name_url = [];
         Object.entries(toDelete).map(([key, value]) => {
             if (value){
@@ -216,7 +240,6 @@ export default function Dashboard() {
             if (daaloPhoto.length){
                 newPhotos();
             }else{
-                console.log(dp, "ahjfhsdjhfoahuerhewbfiuhsuihv");
                 if (dp === 1){
                     deleteProfile();
                 }else if (dp === 2){
@@ -289,10 +312,6 @@ export default function Dashboard() {
         }
     }
 
-    function hello123(){
-        console.log(profilePhoto, "This one");
-    }
-
     // Function to check if change profile radio button in selected in the edit form
     function handleProfileChange(event){
         let s = event.target.value;
@@ -304,21 +323,6 @@ export default function Dashboard() {
         setNewProfile(event.target.files[0]);
     }
 
-    const useStyles = makeStyles((theme) => ({
-        root: {
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'space-around',
-          overflow: 'hidden',
-          backgroundColor: theme.palette.background.paper,
-        },
-        gridList: {
-          width: 500,
-          height: 450,
-        },
-      }));
-
-    const classes = useStyles();
     const handleChange = (event) => {
         setCategories({ ...categories, [event.target.name]: event.target.checked });
     };
@@ -333,62 +337,146 @@ export default function Dashboard() {
 
     const {Wedding, Birthday, Anniversary, Bachelorette, Conference, Couples, Family, Fashion, Graduation, Honeymoon, Instagram, Kids, Maternity, Newborn, Product, Property, Solo_Traveler, Hair_Stylist, Folk, Drone} = categories;
 
-    if (!edit){
-        return (
-            <div style={{textAlign: "left"}}>
-                {/* DP Image */}
-                <div className="DP">
-                    <img src={profilePhoto.url !== "" ? profilePhoto.url : dpp} alt="Loading..." height='180vh' width='200vw' style={{borderRadius: '50%'}} />
-                    {/* <Avatar alt="Remy Sharp" src={data.profile} sizes="large" /> */}
+    if (isLoading){
+        return(
+        <Loader
+            type="Grid"
+            color="#00BFFF"
+            height={100}
+            width={100}
+            visible={isLoading}
+            style = {{marginTop: '20vh'}}
+        />
+        );
+    }
+
+    if(openMessage){
+        return(
+            <div>
+                <div className={c.grow}>
+                    <AppBar position="static">
+                        <Toolbar>
+                            <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
+                                <Typography className={c.title} variant="h6" noWrap>
+                                    Grapher-Mart
+                                </Typography>
+                            </Link>
+                            <Button variant='outlined' style={{color: 'white', backgroundColor: 'rgba(92, 107, 192, 1)', marginLeft: '81vw'}} onClick={e => setOpenMessage(false)}>Back</Button>
+                        <div className={c.grow} />
+                        </Toolbar>
+                    </AppBar>
                 </div>
-    
-                {/* Name, email, no., city, & state */}
-                <div className="personal__info">
-                    <h1>{data.Name}</h1>
-                    <p>{data.Email}</p>
-                    <p>{data.No}</p>
-                    <p>{data.City}, {data.State}</p>
-                </div>
-    
-                {/* Edit and Logout Buttons */}
-                <div style={{ display: 'inline', marginLeft: '45vw', verticalAlign: 'top' }} >
-                    <Button color='primary' variant='contained' style={{marginRight: "2vw"}} onClick={editCat} > Edit </Button>
-                    <Button color='primary' variant='outlinedPrimary' onClick={handleSignOut}> Logout </Button>
-                </div>
-    
-                {/* Categories */}
-                <div className="name"><h2>Categories Selected: </h2></div>
-                <div className="categories">
-                        {
-                            Object.entries(categories).map(([key, value]) => {
-                                if (value){
-                                    return (
-                                        <div className="buttons">
-                                            <Button variant='outlinedPrimary'>{key}</Button>
-                                        </div>
-                                    )
-                                }
-                            })
-                        }
-                </div>
-                
-                <div className="separator">
-                    Your Photos
-                </div>
-    
                 <br/>
-    
-                <div>
-                    {photos.map((tile) => (
-                        <a href={tile.url} target="_blank"><img src={tile.url} alt="nhi chal rha" height='200vh' width='280vw' className='photo' /></a>
-                    ))}
+                <Grid container spacing={0.5} > 
+                    <Grid item xs={5} style={{marginLeft: '27vw'}}>
+                        <Paper className={classes.paper} style={{minHeight: '78vh'}}>
+                            <Messages uid={user}/>
+                        </Paper>
+                    </Grid>
+                </Grid>
+
+            </div>
+        );
+    }
+
+    if (!edit){
+        window.scrollTo(0, 0);
+        return (
+            <div>
+                {/* Header Bar */}
+                <div className={c.grow}>
+                    <AppBar position="fixed">
+                        <Toolbar>
+                            <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
+                                <Typography className={c.title} variant="h6" noWrap>
+                                    Grapher-Mart
+                                </Typography>
+                            </Link>
+                        <div className={c.grow} />
+                        </Toolbar>
+                    </AppBar>
                 </div>
-    
+                <br/>
+
+            <Grid container spacing={0.5} style={{marginTop: "10vh"}}>
+                <Grid item xs={11.2} style={{marginLeft: "1vw", marginRight: '1vw'}}>
+                    <Paper className={classes.paper}>   
+                <div style={{textAlign: "left"}}>
+                    {/* DP Image */}
+                    <div className="DP">
+                        <img src={profilePhoto.url !== "" ? profilePhoto.url : dpp} alt="Loading..." height='180vh' width='200vw' style={{borderRadius: '50%'}} />
+                        {/* <Avatar alt="Remy Sharp" src={data.profile} sizes="large" /> */}
+                    </div>
+        
+                    {/* Name, email, no., city, & state */}
+                    <div className="personal__info">
+                        <h1>{data.Name}</h1>
+                        <p>{data.Email}</p>
+                        <p>{data.No}</p>
+                        <p>{data.City}, {data.State}</p>
+                    </div>
+                        {/* <Messages uid={user}/> */}
+        
+                    {/* Edit and Logout Buttons */}
+                    <div style={{ display: 'inline', marginLeft: '34vw', verticalAlign: 'top' }} >
+                        <Button color='primary' variant='contained' style={{marginRight: "2vw"}} onClick={e => setOpenMessage(true)} > Messages </Button>
+                        <Button color='primary' variant='contained' style={{marginRight: "2vw"}} onClick={editCat} > Edit </Button>
+                        <Button color='primary' variant='outlinedPrimary' onClick={handleSignOut}> Logout </Button>
+                    </div>
+        
+                    {/* Categories */}
+                    <div className="name"><h2>Categories Selected: </h2></div>
+                    <div className="categories">
+                            {
+                                Object.entries(categories).map(([key, value]) => {
+                                    if (value){
+                                        return (
+                                            <div className="buttons">
+                                                <Button variant='outlinedPrimary'>{key}</Button>
+                                            </div>
+                                        )
+                                    }
+                                })
+                            }
+                    </div>
+                    
+                    <div className="separator">
+                        Your Photos
+                    </div>
+        
+                    <br/>
+        
+                    <div>
+                        {photos.map((tile) => (
+                            <a href={tile.url} target="_blank"><img src={tile.url} alt="Loading..." height='200vh' width='270vw' className='photo' /></a>
+                        ))}
+                    </div>
+        
+                </div>
+                        </Paper>
+                    </Grid>
+                </Grid>
             </div>
         )
     }else{
         return(
             <div>
+                <div className={c.grow}>
+                    <AppBar position="fixed">
+                        <Toolbar>
+                            <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
+                                <Typography className={c.title} variant="h6" noWrap>
+                                    Grapher-Mart
+                                </Typography>
+                            </Link>
+                        <div className={c.grow} />
+                        </Toolbar>
+                    </AppBar>
+                </div>
+                <br/><br/>
+                <Grid container spacing={0.5} style={{marginTop: "10vh"}}>
+                <Grid item xs={11.2} style={{marginLeft: "1vw", marginRight: '1vw'}}>
+                    <Paper className={classes.paper}> 
                 <div className="edit__form">
                     <FormControl fullWidth="true">
                     <InputLabel>Full Name</InputLabel>
@@ -403,7 +491,6 @@ export default function Dashboard() {
                     <br/><br/>
 
                     {/* State Selector  */}
-                    {console.log(defaultState)}
                     <Select options={states} placeholder='Select State' defaultValue={states[defaultState]} onChange={event => cityForState(event)} />
                     <br/>
 
@@ -570,6 +657,9 @@ export default function Dashboard() {
                     <Button onClick={event => setEdit(false)} variant="outlinedPrimary"> Cancel </Button>
                 </div>
                 <br/><br/><br/><br/>
+                </Paper>
+                    </Grid>
+                </Grid>
             </div>
         )
     }

@@ -8,8 +8,8 @@ import Dashboard from './pages/Dashboard/Dashboard';
 function App() {
   return (
     <div className="App">
-      <a href='/'><h1>Grapher Mart</h1></a>
-      <hr/>
+      {/* <a href='/'><h1>Grapher Mart</h1></a>
+      <hr/> */}
       {/* <br/><br/> */}
       <BrowserRouter>
       <Switch>
