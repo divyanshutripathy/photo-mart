@@ -39,3 +39,8 @@
     background-color: seashell !important;
     text-align: right !important;
 }
+
+.ln :hover{
+    cursor: pointer;
+}
+

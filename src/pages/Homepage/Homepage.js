@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Grid, Paper, makeStyles, fade, AppBar, Toolbar, Typography } from '@material-ui/core';
 import db, {auth} from '../../firebase';
-import camart from '../../newCamWall.jpg';
+import logo from '../../logo8.png';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -72,13 +72,11 @@ export default function Homepage() {
                 let uid = _user.uid;
                 db.collection('photographers').doc(uid).get().then(doc => {
                     if (doc.exists){
-                        if ("categories" in doc.data()){
-                            window.location.href = "/dashboard";
-                        }else{
-                            window.location.href = "/photog_login";
-                        }
+                        window.location.href = "/dashboard";
                     }else{
-                        console.log("Nhi mila");
+                        auth.signOut();
+                        window.location.href = "/photog_login";
+                        console.log("Not found");
                     }
                 })
             }else{
@@ -97,7 +95,8 @@ export default function Homepage() {
       <AppBar position="static">
         <Toolbar>
           <Typography className={c.title} variant="h6" noWrap>
-            Grapher-Mart
+            <img src={logo} alt='Not working' height='60'/>
+            {/* Grapher */}
           </Typography>
           <div className={c.grow} />
         </Toolbar>
@@ -106,14 +105,28 @@ export default function Homepage() {
 
     <br/><br/>
 
-        <Grid container spacing={0.5}>
-            <Grid item xs={3} style={{marginLeft: "36vw"}}>
+        <Grid container spacing={0.5} style={{display: "block-inline"}}>
+            <Grid item xs={3} style={{marginLeft: "18vw"}}>
             <Paper className={classes.paper} >
                 <div style={{marginBottom: "5vh"}}>
                     <br/><br/>
                     <Button color='primary' variant='contained' onClick={photogPage}> Are You a Photographer? </Button>
                     <br/><br/>
-                    <Button color='primary' variant='contained'> Looking to hire one? </Button>
+                    <img src='https://st4.depositphotos.com/10614052/i/600/depositphotos_288016322-stock-photo-male-photographer-on-white-background.jpg' height='300vh' width='300'/>
+                    {/* <br/><br/>
+                    <Button color='primary' variant='contained' href="/customer"> Looking to hire one? </Button> */}
+                </div>
+            </Paper>
+            </Grid>
+            <Grid item xs={3} style={{marginLeft: "15vw"}}>
+            <Paper className={classes.paper} >
+                <div style={{marginBottom: "5vh"}}>
+                    {/* <br/><br/>
+                    <Button color='primary' variant='contained' onClick={photogPage}> Are You a Photographer? </Button> */}
+                    <br/><br/>
+                    <Button color='primary' variant='contained' href="/customer"> Looking to hire one? </Button>
+                    <br/><br/>
+                    <img src='https://www.emmasedition.com/wp-content/uploads/2019/08/New-Poses-You-Can-Try-in-Photos-Emmas-Edition-6.jpg' height='300' width='250'/>
                 </div>
             </Paper>
             </Grid>
