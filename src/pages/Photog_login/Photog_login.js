@@ -7,6 +7,7 @@ import Category from '../Category/Category';
 // import { StateDropdown, RegionDropdown } from 'react-indian-state-region-selector';
 import csc from 'country-state-city';
 import Select from 'react-select';
+import logo from '../../logo8.png';
 
 export const useStyles = makeStyles((theme) => ({
     root: {
@@ -82,25 +83,25 @@ export default function Photog_login() {
     const [error1, setError1] = useState("");
     const [error2, setError2] = useState("");
 
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((_user) => {
-            if (_user){
-                let uid = _user.uid;
-                db.collection('photographers').doc(uid).get().then(doc => {
-                    if (doc.exists){
-                        if ("categories" in doc.data()){
-                            window.location.href = "/dashboard";
-                        }else{
-                            setLogin(2);
-                        }
-                    }else{
-                        console.log("Nhi mila");
-                    }
-                })
-            }
-        })
-        return unsubscribe;
-    }, [])
+    // useEffect(() => {
+    //     const unsubscribe = auth.onAuthStateChanged((_user) => {
+    //         if (_user){
+    //             let uid = _user.uid;
+    //             db.collection('photographers').doc(uid).get().then(doc => {
+    //                 if (doc.exists){
+    //                     if ("categories" in doc.data()){
+    //                         window.location.href = "/dashboard";
+    //                     }else{
+    //                         setLogin(2);
+    //                     }
+    //                 }else{
+    //                     console.log("Nhi mila");
+    //                 }
+    //             })
+    //         }
+    //     })
+    //     return unsubscribe;
+    // }, [])
 
     useEffect(() => {
         const nstates = csc.getStatesOfCountry("IN");
@@ -198,6 +199,9 @@ export default function Photog_login() {
                     No: no,
                     State: selectedState,
                     City: selectedCity,
+                    photos: [],
+                    profile: {url: '', name: ''},
+                    categories: {},
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(
                     () => console.log("Registered!"),
@@ -224,7 +228,8 @@ export default function Photog_login() {
                         <Toolbar>
                         <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
                         <Typography className={c.title} variant="h6" noWrap>
-                            Grapher-Mart
+                            {/* Grapher-Mart */}
+                            <img src={logo} alt='Not working' height='60'/>
                         </Typography>
                         </Link>
                         <div className={c.grow} />
@@ -299,7 +304,8 @@ export default function Photog_login() {
                         <Toolbar>
                         <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
                         <Typography className={c.title} variant="h6" noWrap>
-                            Grapher-Mart
+                            {/* Grapher-Mart */}
+                            <img src={logo} alt='Not working' height='60'/>
                         </Typography>
                         </Link>
                         <div className={c.grow} />

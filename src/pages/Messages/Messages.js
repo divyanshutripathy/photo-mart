@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef, forwardRef } from 'react';
 import db from '../../firebase';
 import firebase from 'firebase';
-import {Button, Input, Card, CardContent, Typography, Link} from '@material-ui/core';
+import {Button, Input, Grid, Paper, Card, CardContent, Typography, Link} from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import './Messages.css';
 import FlipMove from 'react-flip-move';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import {useStyles} from '../Photog_login/Photog_login';
 
 const Message = forwardRef(({message, photog}, ref) => {
     return (
@@ -26,6 +27,7 @@ const Message = forwardRef(({message, photog}, ref) => {
 })
 
 export default function Messages({uid}) {
+    const classes = useStyles();
     const [ids, setIds] = useState([]);
     const [messId, setMessId] = useState("");
     const [names, setNames] = useState([]);
@@ -122,14 +124,23 @@ export default function Messages({uid}) {
                 </h2>
                 <hr/>
             </div>
-            <div className='message__box'>
-                
+            <div className='message__box' align='center'>
+            
                 {
                     names.map((data, index) => (
-                        <Button variant="outlinedPrimary" style={{width: '25vw', marginBottom: '3vh'}} onClick={e => toChats(index)}> {data} </Button>
+                        <Card style={{backgroundColor: 'seashell', marginBottom: '2vh', width: '35vw'}}>
+                            <CardContent>
+                                <Link className='ln' onClick={e => toChats(index)} style={{color: 'black', textDecoration: 'none', onHover: 'cursor'}}>
+                                <Typography color="white" variant="outlined" component="h3">
+                                    {data}
+                                </Typography>
+                                </Link>
+                            </CardContent>
+                        </Card>
                     ))
                 }
             </div>
+            {/* <Button variant="outlinedPrimary" style={{width: '25vw', marginBottom: '3vh'}} onClick={e => toChats(index)}> {data} </Button> */}
         </div>
     )
 }

@@ -11,6 +11,7 @@ import firebase from "firebase";
 import Loader from "react-loader-spinner";
 import {useStyles, useStyles0} from '../Photog_login/Photog_login';
 import Messages from '../Messages/Messages';
+import logo from '../../logo8.png';
 
 const useStylesM = makeStyles((theme) => ({
     modal: {
@@ -69,7 +70,6 @@ export default function Dashboard() {
                 db.collection('photographers').doc(uid).get().then(doc => {
                     if (doc.exists){
                         var data = doc.data();
-                        console.log(data, user, "|| sjahfuhdsuhfusnhjohsjdhnjshnj----------------------");
                         setPhotos(data.photos);
                         logPhotos(data.photos);
                         setData(data);
@@ -134,7 +134,6 @@ export default function Dashboard() {
         setSelectedCity(data.City);
         setSelectedState(data.State);
         // setCategories(data.categories);
-        // console.log(categories, "maha chomu react");
     }, [edit])
 
     function editCat(event){
@@ -358,10 +357,11 @@ export default function Dashboard() {
                         <Toolbar>
                             <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
                                 <Typography className={c.title} variant="h6" noWrap>
-                                    Grapher-Mart
+                                    {/* Grapher-Mart */}
+                                    <img src={logo} alt='Not working' height='60'/>
                                 </Typography>
                             </Link>
-                            <Button variant='outlined' style={{color: 'white', backgroundColor: 'rgba(92, 107, 192, 1)', marginLeft: '81vw'}} onClick={e => setOpenMessage(false)}>Back</Button>
+                            <Button variant='outlined' style={{color: 'white', backgroundColor: 'rgba(92, 107, 192, 1)', marginLeft: '70vw'}} onClick={e => setOpenMessage(false)}>Back</Button>
                         <div className={c.grow} />
                         </Toolbar>
                     </AppBar>
@@ -389,7 +389,8 @@ export default function Dashboard() {
                         <Toolbar>
                             <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
                                 <Typography className={c.title} variant="h6" noWrap>
-                                    Grapher-Mart
+                                    {/* Grapher-Mart */}
+                                    <img src={logo} alt='Not working' height='60'/>
                                 </Typography>
                             </Link>
                         <div className={c.grow} />
@@ -399,7 +400,7 @@ export default function Dashboard() {
                 <br/>
 
             <Grid container spacing={0.5} style={{marginTop: "10vh"}}>
-                <Grid item xs={11.2} style={{marginLeft: "1vw", marginRight: '1vw'}}>
+                <Grid item xs={12} style={{marginLeft: "1vw", marginRight: '1vw'}}>
                     <Paper className={classes.paper}>   
                 <div style={{textAlign: "left"}}>
                     {/* DP Image */}
@@ -418,7 +419,7 @@ export default function Dashboard() {
                         {/* <Messages uid={user}/> */}
         
                     {/* Edit and Logout Buttons */}
-                    <div style={{ display: 'inline', marginLeft: '34vw', verticalAlign: 'top' }} >
+                    <div style={{ display: 'inline', marginLeft: '30vw', verticalAlign: 'top' }} >
                         <Button color='primary' variant='contained' style={{marginRight: "2vw"}} onClick={e => setOpenMessage(true)} > Messages </Button>
                         <Button color='primary' variant='contained' style={{marginRight: "2vw"}} onClick={editCat} > Edit </Button>
                         <Button color='primary' variant='outlinedPrimary' onClick={handleSignOut}> Logout </Button>
@@ -466,7 +467,7 @@ export default function Dashboard() {
                         <Toolbar>
                             <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
                                 <Typography className={c.title} variant="h6" noWrap>
-                                    Grapher-Mart
+                                    <img src={logo} alt='Not working' height='60'/>
                                 </Typography>
                             </Link>
                         <div className={c.grow} />
@@ -475,7 +476,7 @@ export default function Dashboard() {
                 </div>
                 <br/><br/>
                 <Grid container spacing={0.5} style={{marginTop: "10vh"}}>
-                <Grid item xs={11.2} style={{marginLeft: "1vw", marginRight: '1vw'}}>
+                <Grid item xs={12} style={{marginLeft: "1vw", marginRight: '1vw'}}>
                     <Paper className={classes.paper}> 
                 <div className="edit__form">
                     <FormControl fullWidth="true">

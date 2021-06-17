@@ -1,9 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import db, {auth, storage} from '../../firebase';
-import { Button, Input, Checkbox, FormControl, FormGroup, FormControlLabel, FormLabel } from '@material-ui/core';
+import { Button, Input, Checkbox, FormControl, FormGroup, FormControlLabel, FormLabel, AppBar, Toolbar, Link, Typography, Grid, Paper } from '@material-ui/core';
 import Loader from "react-loader-spinner";
+import {useStyles, useStyles0} from '../Photog_login/Photog_login';
+import logo from '../../logo8.png';
 
 export default function Category() {
+  const classes = useStyles();
+  const c = useStyles0();
     const [user, setUser] = useState("");
     const [photos, setPhotos] = useState([])
     const [data, setData] = useState([])
@@ -31,11 +35,8 @@ export default function Category() {
         db.collection("photographers").doc(photog)
         .get().then((doc) => {
           if (doc.exists){
-            // Convert to City object
             console.log(doc.data());
             setData([...data, doc.data()]);
-            // Use a City instance method
-            // console.log(city.toString());
           } else {
             console.log("No such document!");
           }}).catch((error) => {
@@ -54,7 +55,7 @@ export default function Category() {
         db.collection("photographers").doc(user).update({
           categories: categories
         }).then(
-          () => cloudStorage(),//console.log("Ho gya bidu apne kaam!"),
+          () => cloudStorage(),
           (error) => console.log("Code phat gya: ", error)
         );
       }
@@ -79,9 +80,7 @@ export default function Category() {
 
         var profile_name = '';
         var profile_url = '';
-        console.log("1", profile);
         if (profile.length !== 0){
-          console.log("Yeha aya!2");
           let img = profile;
           profile_name = img.name;
           let uploadTask = storage.ref(`/${user}/${img.name}`).put(img);
@@ -99,13 +98,8 @@ export default function Category() {
           });
         }
 
-        console.log("3");
-
         for (var i = 0; i < file.length; i++){
-          console.log("4");
-          console.log(photos, "first");
           let img = file[i];
-          console.log(img.name, "Name hai ye");
           imgNames.push(img.name);
           let uploadTask = storage.ref(`/${user}/${img.name}`).put(img);
           promises.push(uploadTask);
@@ -115,7 +109,6 @@ export default function Category() {
             .child(img.name)
             .getDownloadURL()
             .then((url) => {
-              console.log("5");
               console.log(url);
               arr.push(url);
               setPhotos(arr);
@@ -125,14 +118,11 @@ export default function Category() {
         }
         Promise.allSettled(promises).then(tasks => {
           setTimeout(() => {
-            console.log("6");
           console.log('all uploads complete');
           var name_urls = [];
           for (var u = 0; u < file.length; u++){
             name_urls.push({name: imgNames[u], url: arr[u]})
           }
-          console.log(name_urls, "adhhfghsgdhbh-----------------------------------")
-          console.log(profile_url, "wqiei vjkdjkj9239920", profile_name);
           db.collection("photographers").doc(user).update({
             photos: name_urls,
             profile: {url: profile_url, name: profile_name}
@@ -161,8 +151,24 @@ export default function Category() {
 
     return (
         <div>
+          <div className={c.grow}>
+              <AppBar position="static">
+                  <Toolbar>
+                  <Link href="/" style={{color: 'white', textDecoration: 'none'}}>
+                  <Typography className={c.title} variant="h6" noWrap>
+                    <img src={logo} alt='Not working' height='60'/>
+                  </Typography>
+                  </Link>
+                  <div className={c.grow} />
+                  </Toolbar>
+              </AppBar>
+          </div>
+          
           <br/><br/>
           {console.log(photos, 'lol')}
+          <Grid container spacing={0.5} >
+            <Grid item xs={8} style={{marginLeft: "20vw"}}>
+                <Paper className={classes.paper} style={{marginRight: '-1vw'}}>  
             <FormControl component="fieldset">
               <FormLabel component="legend">Assign categories in which you are suitable: </FormLabel>
                 <FormGroup row>
@@ -275,7 +281,8 @@ export default function Category() {
             <br/><br/>
             <Button onClick={logData} variant="outlinedPrimary">Submit</Button>
             {/* <Button onClick={cloudStorage} variant="outlinedPrimary">Image Upload</Button> */}
-
+            </Paper>
+            </Grid></Grid>
         </div>
     )
 }
